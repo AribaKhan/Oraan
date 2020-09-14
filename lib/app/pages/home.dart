@@ -1,20 +1,57 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 
-class MainPage extends StatefulWidget {
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:oraan/app/utils/networkUtils.dart';
+
+class HomePage extends StatefulWidget {
+  final dynamic id;
   @override
-  MainPageState createState() => MainPageState();
+  HomePageState createState() => HomePageState(this.id);
+  HomePage({
+    Key key,
+    @required this.id,
+  }) : super(key: key);
 }
 
-class MainPageState extends State<MainPage> {
+class HomePageState extends State<HomePage> {
   String phone = "";
   bool loggingIn = false;
+  bool isLoading = false;
+  String savings = "";
   TextEditingController phoneController = TextEditingController();
+  HomePageState(id);
+  @override
+  void initState() {
+    setState(() {
+      isLoading = true;
+    });
+    lifetimesaving();
+    super.initState();
+  }
 
-  login() {
+  lifetimesaving() async {
     setState(() {
       loggingIn = true;
     });
+    var responseJson = await NetworkUtils.lifetimeSaving(widget.id);
+    var message = "";
+
+    print(responseJson);
+
+    if (responseJson["data"]["lifeTimeSavings"] != null) {
+      savings = responseJson["data"]["lifeTimeSavings"];
+      setState(() {
+        isLoading = false;
+      });
+    } else {
+      savings = "Not found";
+      Fluttertoast.showToast(
+          msg: "Unexpected error",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIos: 4);
+    }
   }
 
   @override
@@ -60,7 +97,7 @@ class MainPageState extends State<MainPage> {
             children: [
               Container(
                   alignment: Alignment.center,
-                  color:  Theme.of(context).primaryColor,
+                  color: Theme.of(context).primaryColor,
                   height: _height / 4,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -89,16 +126,21 @@ class MainPageState extends State<MainPage> {
                   Container(
                       child: Text("Your patience and discipline is paying off!",
                           style: TextStyle(
-                              fontSize: 12, color:  Theme.of(context).primaryColor))),
+                              fontSize: 12,
+                              color: Theme.of(context).primaryColor))),
                   Container(
                       padding: EdgeInsets.symmetric(vertical: 3),
                       child: Text("Lifetime savings",
                           style: TextStyle(
-                              fontSize: 20, color:  Theme.of(context).primaryColor))),
-                  Container(
-                      child: Text("PKR 415,000",
-                          style: TextStyle(
-                              fontSize: 30, color:  Theme.of(context).primaryColor)))
+                              fontSize: 20,
+                              color: Theme.of(context).primaryColor))),
+                  isLoading
+                      ? CircularProgressIndicator()
+                      : Container(
+                          child: Text("PKR " + savings,
+                              style: TextStyle(
+                                  fontSize: 30,
+                                  color: Theme.of(context).primaryColor)))
                 ],
               ))
             ],
