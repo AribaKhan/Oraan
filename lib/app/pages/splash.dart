@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:oraan/app/pages/login/login.dart';
+import 'package:oraan/app/pages/login.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
