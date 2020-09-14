@@ -15,3 +15,9 @@ Flutter Login - Login page takes you from start to homepage.
 # Homepage
 
 Show details of loggedin user account.
+
+# Run project
+
+1. Open the command Pallet using ctrl+shift+p. Go to the folder you where you want to clone project.
+2. Type git clone https://github.com/AribaKhan/Oraan.git.
+3. Open the project in VS code and run.
