@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:oraan/app/pages/home.dart';
 import 'package:oraan/app/utils/networkUtils.dart';
 
 class LoginPage extends StatefulWidget {
@@ -12,27 +15,49 @@ class LoginPageState extends State<LoginPage> {
   bool loggingIn = false;
   TextEditingController phoneController = TextEditingController();
   TextEditingController passcodeController = TextEditingController();
-
+  final formKey = GlobalKey<FormState>();
   login() async {
+    setState(() {
+      loggingIn = true;
+    });
     var responseJson = await NetworkUtils().loginAccount(
       phone,
       passcode,
     );
     var message = "";
+    var id;
     print(responseJson);
-    if (responseJson != null && responseJson != "NetworkError")
-      message = responseJson;
-    Navigator.push(
-      context,
-      PageRouteBuilder(
-          transitionsBuilder: (context, anim1, anim2, child) =>
-              Container(child: child),
-          transitionDuration: Duration(seconds: 0),
-          pageBuilder: (context, anim1, anim2) => LoginPage()),
-    );
-    setState(() {
-      loggingIn = true;
-    });
+
+      message = responseJson["data"]["message"];
+    id = responseJson["data"]["userId"];
+    if (message == "user not found") {
+      Fluttertoast.showToast(
+          msg: "User not found",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIos: 4);
+      setState(() {
+        loggingIn = false;
+      });
+    } else if (id != null && message == "user login success") {
+      Navigator.push(
+        context,
+        PageRouteBuilder(
+            transitionsBuilder: (context, anim1, anim2, child) =>
+                Container(child: child),
+            transitionDuration: Duration(seconds: 0),
+            pageBuilder: (context, anim1, anim2) => HomePage(id: id)),
+      );
+      setState(() {
+        loggingIn = false;
+      });
+    } else {
+      Fluttertoast.showToast(
+          msg: "Unexpected error",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIos: 4);
+    }
   }
 
   @override
@@ -40,7 +65,9 @@ class LoginPageState extends State<LoginPage> {
     final _height = MediaQuery.of(context).size.height;
     final _width = MediaQuery.of(context).size.width;
     return Scaffold(
-      body: Container(
+        body: Form(
+      key: formKey,
+      child: Container(
           alignment: Alignment.center,
           height: _height,
           child: Column(
@@ -70,15 +97,16 @@ class LoginPageState extends State<LoginPage> {
               Container(
                 margin: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
                 child: TextFormField(
+                  inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
                   decoration: new InputDecoration(
                     labelText: ("Phone number"),
+                    labelStyle: TextStyle(color: Colors.grey),
                     contentPadding: new EdgeInsets.symmetric(
                         vertical: 20.0, horizontal: 10.0),
                     border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(32.0)),
+                        borderRadius: BorderRadius.circular(10.0)),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                          color: Theme.of(context).primaryColor, width: 1.0),
+                      borderSide: BorderSide(color: Colors.grey, width: 1.0),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0),
@@ -103,19 +131,20 @@ class LoginPageState extends State<LoginPage> {
               Container(
                 margin: EdgeInsets.symmetric(vertical: 25, horizontal: 15),
                 child: TextFormField(
+                  //  obscureText: true,
                   decoration: new InputDecoration(
                     suffixIcon: Icon(
                       Icons.remove_red_eye,
                       color: Colors.grey,
                     ),
                     labelText: ("Passcode"),
+                    labelStyle: TextStyle(color: Colors.grey),
                     contentPadding: new EdgeInsets.symmetric(
                         vertical: 20.0, horizontal: 10.0),
                     border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(32.0)),
+                        borderRadius: BorderRadius.circular(10.0)),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                          color: Theme.of(context).primaryColor, width: 1.0),
+                      borderSide: BorderSide(color: Colors.grey, width: 1.0),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0),
@@ -123,17 +152,17 @@ class LoginPageState extends State<LoginPage> {
                     ),
                     hintText: ("Passcode"),
                   ),
-                  validator: (val) =>
-                      val.length == 0 ? 'Passcode cannot be empty.' : null,
-                  onSaved: (val) => passcodeController.text = val,
+                  validator: (valp) =>
+                      valp.length == 0 ? 'Passcode cannot be empty.' : null,
+                  onSaved: (valp) => passcodeController.text = valp,
                   controller: new TextEditingController.fromValue(
                       new TextEditingValue(
                           text: passcodeController.text,
                           selection: new TextSelection.collapsed(
                               offset: passcodeController.text.length))),
-                  onChanged: (val) {
-                    passcodeController.text = val;
-                    passcode = val;
+                  onChanged: (valp) {
+                    passcodeController.text = valp;
+                    passcode = valp;
                   },
                 ),
               ),
@@ -162,10 +191,10 @@ class LoginPageState extends State<LoginPage> {
                               style: TextStyle(color: Colors.white),
                             ),
                       onPressed: () {
-                        login();
-                        setState(() {
-                          loggingIn = true;
-                        });
+                        if (formKey.currentState.validate()) {
+                          formKey.currentState.save();
+                          login();
+                        }
                       })),
               FlatButton(
                   onPressed: null,
@@ -179,6 +208,6 @@ class LoginPageState extends State<LoginPage> {
                               fontSize: 16))))
             ],
           )),
-    );
+    ));
   }
 }
