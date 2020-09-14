@@ -128,9 +128,9 @@ class LoginPageState extends State<LoginPage> {
                   onSaved: (val) => passcodeController.text = val,
                   controller: new TextEditingController.fromValue(
                       new TextEditingValue(
-                          text: phoneController.text,
+                          text: passcodeController.text,
                           selection: new TextSelection.collapsed(
-                              offset: phoneController.text.length))),
+                              offset: passcodeController.text.length))),
                   onChanged: (val) {
                     passcodeController.text = val;
                     passcode = val;
