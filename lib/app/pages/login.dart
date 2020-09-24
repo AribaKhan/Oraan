@@ -40,6 +40,7 @@ class LoginPageState extends State<LoginPage> {
         loggingIn = false;
       });
     } else if (id != null && message == "user login success") {
+      Navigator.of(context).pop();
       Navigator.push(
         context,
         PageRouteBuilder(
@@ -131,7 +132,7 @@ class LoginPageState extends State<LoginPage> {
               Container(
                 margin: EdgeInsets.symmetric(vertical: 25, horizontal: 15),
                 child: TextFormField(
-                  //  obscureText: true,
+               obscureText: true,
                   decoration: new InputDecoration(
                     suffixIcon: Icon(
                       Icons.remove_red_eye,
