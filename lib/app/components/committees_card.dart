@@ -104,39 +104,8 @@ class Committees extends StatelessWidget {
                             ],
                           ))
 
-                      // leading:
-                      //  ListView.builder(
-                      // physics: ScrollPhysics(),
-                      // shrinkWrap: true,
-                      // itemCount: this.json["payouts"].length,
-                      // itemBuilder: (_, int i) =>
-                      //  Text(this.json["payouts"][i]["payoutAmount"])
-                      // )
                     ],
                   ),
-
-//                   ListTile(
-// trailing:
-
-//                   Image.asset("lib/app/assets/committee.png"),
-//                 title:   ListView.builder(
-//                                               physics: ScrollPhysics(),
-//                                               shrinkWrap: true,
-//                                               itemCount: this.json["payouts"].length,
-//                                               itemBuilder: (_, int i) =>
-//                                               Text(this.json["payoutMonth"])
-//                                               ),
-//                                               leading:
-//                                                ListView.builder(
-//                                               physics: ScrollPhysics(),
-//                                               shrinkWrap: true,
-//                                               itemCount: this.json["payouts"].length,
-//                                               itemBuilder: (_, int i) =>
-//                                                Text(this.json["payoutAmount"])
-//                                               )
-//                   ),
-
-//                      ],),
                 ),
               ),
             ));
