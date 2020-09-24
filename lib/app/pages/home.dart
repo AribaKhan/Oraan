@@ -164,7 +164,6 @@ class HomePageState extends State<HomePage> {
                   ],
                 )),
             Container(
-            
               height: 60,
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -178,7 +177,7 @@ class HomePageState extends State<HomePage> {
                               color: Theme.of(context).primaryColor)),
                     ),
                     Container(
-                        padding: EdgeInsets.symmetric(horizontal:15.0),
+                        padding: EdgeInsets.symmetric(horizontal: 15.0),
                         child: DropdownButtonHideUnderline(
                           child: DropdownButton(
                               icon: Icon(Icons.menu,
